@@ -1,0 +1,50 @@
+﻿<CacheDocs>
+	<Cache>
+		<Class name="Cache">
+			<example>Simple example 
+			<code >
+			[c#]
+			
+			private static void MyCacheOnEvent(CacheItem ci)
+			{
+				// do somethings
+				}
+				[STAThread]
+				static void Main(string[] args)
+				{
+					object retval;
+					Cache&lt;string, object&gt; _caches =  new Cache&lt;string, object&gt;(StringComparer.CurrentCultureIgnoreCase);
+					
+					//Insert values into the cache
+					_caches.Put(&quot;itemaA&quot;,&quot;valueA&quot;);
+					_caches.Put(&quot;itemaB&quot;,&quot;valueB&quot;, 2 ); //for 2 seconds
+					
+					//Retrieve values from the cache
+					_caches.Get(&quot;itemaA&quot;,out retval); //true if found
+					
+					//Retrieve values and add if missed
+					_caches.GetSet(&quot;itemaA&quot;,out retval, () =&gt; OnMissDoSomething()); 
+					_caches.GetSet(&quot;itemaB&quot;,out retval, 2, () =&gt; OnMissDoSomething());  //for 2 seconds
+					
+					switch (_caches.GetSet(&quot;itemaA&quot;,out retval, () =&gt; OnMissDoSomething())){
+						case Added: 		//Created in a Cache
+							break;
+						case Unchanged:  	//already in a Cache
+							break;
+						case Updated: 		//Updated after starved
+							break;
+						case UnCached: 		//Impossibile to Cache (es Timeout deadlock)
+							break;
+					}
+					
+					//Clear all collection
+					_caches.Clear();
+					
+					//Remove starved items and their statistics
+					_caches.Trim()
+				}
+			</code>
+			</example>
+		</Class>
+	</Cache>
+</CacheDocs>
